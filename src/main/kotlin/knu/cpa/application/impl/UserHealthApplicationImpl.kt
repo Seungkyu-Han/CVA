@@ -16,30 +16,28 @@ import knu.cpa.repository.UserRepository
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.domain.PageRequest
 import org.springframework.http.*
-import org.springframework.security.core.Authentication
-import org.springframework.stereotype.Service
 import org.springframework.web.client.RestTemplate
 import java.time.LocalDate
 import java.time.Period
 import java.util.concurrent.CompletableFuture
 
-@Service
-class UserHealthApplicationImpl(
+
+open class UserHealthApplicationImpl(
     private val userHealthRepository: UserHealthRepository,
     private val strokeRepository: StrokeRepository,
     private val userRepository: UserRepository,
     @Value("\${fastApi}")
     private val fastApiServer: String,
-    private val objectMapper: ObjectMapper) : UserHealthApplication{
-    override fun post(userHealthPostReq: UserHealthPostReq, authentication: Authentication): ResponseEntity<HttpStatus> {
-        val userHealth = userHealthRepository.save(UserHealth(userHealthPostReq, User(authentication)))
+    private val objectMapper: ObjectMapper){
+    fun post(userHealthPostReq: UserHealthPostReq, userId: Long): ResponseEntity<HttpStatus> {
+        val userHealth = userHealthRepository.save(UserHealth(userHealthPostReq, User(userId)))
 
         var age = 0
         var bmi = 0F
 
         CompletableFuture.supplyAsync {
             println("STEP1")
-            userRepository.findById(authentication.name.toLong()).orElseThrow()
+            userRepository.findById(userId).orElseThrow()
         }.thenApplyAsync {
             println("STEP2")
             age = Period.between(it.birthday, LocalDate.now()).years
@@ -74,25 +72,25 @@ class UserHealthApplicationImpl(
         return ResponseEntity.ok().build()
     }
 
-    override fun getList(pageNumber: Int, pageSize: Int, authentication: Authentication): ResponseEntity<List<UserHealthGetElementRes>> {
-        return ResponseEntity.ok(userHealthRepository.findByUserOrderByIdDesc(User(authentication), PageRequest.of(pageNumber, pageSize)).map{
+    fun getList(pageNumber: Int, pageSize: Int, userId: Long): ResponseEntity<List<UserHealthGetElementRes>> {
+        return ResponseEntity.ok(userHealthRepository.findByUserOrderByIdDesc(User(userId), PageRequest.of(pageNumber, pageSize)).map{
                 userHealth -> UserHealthGetElementRes(userHealth)
         })
     }
 
-    override fun get(id: Int?, authentication: Authentication): ResponseEntity<UserHealthGetRes> {
+    fun get(id: Int?, userId: Long): ResponseEntity<UserHealthGetRes> {
         return ResponseEntity.ok(
             UserHealthGetRes(if(id == null)
-                userHealthRepository.findTopByUserOrderByIdDesc(User(authentication))
+                userHealthRepository.findTopByUserOrderByIdDesc(User(userId))
             else
                 userHealthRepository.findById(id).orElseThrow { NullPointerException() } ?: throw NullPointerException())
         )
 
     }
 
-    override fun delete(id: Int, authentication: Authentication): ResponseEntity<HttpStatus> {
+    fun delete(id: Int, userId: Long): ResponseEntity<HttpStatus> {
         CompletableFuture.runAsync {
-            println(if(userHealthRepository.deleteByIdAndUser(id, User(authentication)) == 1) "DELETE COMPLETE: id=$id"
+            println(if(userHealthRepository.deleteByIdAndUser(id, User(userId)) == 1) "DELETE COMPLETE: id=$id"
             else "DELETE INCOMPLETE: id=$id")
         }
         return ResponseEntity.ok().build()
