@@ -51,6 +51,7 @@ class AuthApplicationImpl(
         return ResponseEntity.ok(AuthLoginRes(refreshToken = refreshToken, accessToken = accessToken))
     }
 
+    //로그인 토큰을 받아오는 메서드
     override fun getLogin(code: String): ResponseEntity<AuthLoginRes> {
 
         val kakaoAccessToken = getKakaoAccessToken(code) ?: throw NullPointerException()

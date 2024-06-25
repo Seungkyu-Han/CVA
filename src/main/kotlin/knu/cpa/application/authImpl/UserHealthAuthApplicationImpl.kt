@@ -15,6 +15,8 @@ import org.springframework.http.ResponseEntity
 import org.springframework.security.core.Authentication
 import org.springframework.stereotype.Service
 
+
+//Decoration 패턴을 사용해 인증 기능 추가
 @Service
 class UserHealthAuthApplicationImpl(
     private val userHealthRepository: UserHealthRepository,

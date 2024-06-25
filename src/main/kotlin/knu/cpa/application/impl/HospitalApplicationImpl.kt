@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service
 @Service
 class HospitalApplicationImpl(private val hospitalRepository: HospitalRepository) : HospitalApplication{
 
+    //가까운 병원을 조회하는 메서드
     override fun get(latitude: Float, longitude: Float, size: Int): ResponseEntity<List<HospitalGetElementRes>> {
         return ResponseEntity.ok(
             hospitalRepository.findNearestHospitals(latitude, longitude, PageRequest.of(0, size)).map {

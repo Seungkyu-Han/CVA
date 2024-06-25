@@ -29,6 +29,8 @@ open class UserHealthApplicationImpl(
     @Value("\${fastApi}")
     private val fastApiServer: String,
     private val objectMapper: ObjectMapper){
+
+    //유저 건강정보를 저장하고, 비동기적으로 확률을 예측하는 FastAPI를 호출하는 메서드
     fun post(userHealthPostReq: UserHealthPostReq, userId: Long): ResponseEntity<HttpStatus> {
         val userHealth = userHealthRepository.save(UserHealth(userHealthPostReq, User(userId)))
 
@@ -72,6 +74,7 @@ open class UserHealthApplicationImpl(
         return ResponseEntity.ok().build()
     }
 
+    //본인이 작성한 건강정보들을 조회하는 메서드
     fun getList(pageNumber: Int, pageSize: Int, userId: Long): ResponseEntity<List<UserHealthGetElementRes>> {
         return ResponseEntity.ok(userHealthRepository.findByUserOrderByIdDesc(User(userId), PageRequest.of(pageNumber, pageSize)).map{
                 userHealth -> UserHealthGetElementRes(userHealth)

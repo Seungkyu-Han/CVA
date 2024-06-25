@@ -21,6 +21,7 @@ class HealthInfoApplicationImpl(
     private val healthInfoRepository: HealthInfoRepository
 ): HealthInfoApplication {
 
+    //본인에게 맞는 건강정보를 조회하는 메서드
     override fun getList(authentication: Authentication): ResponseEntity<List<HealthInfoGetElementRes>> {
         val healthInfoGetElementList = mutableListOf<HealthInfoGetElementRes>()
         val strokeList = strokeRepository.findTopByUserOrderByIdDesc(User(authentication), PageRequest.of(0, 1))
@@ -80,6 +81,7 @@ class HealthInfoApplicationImpl(
         return ResponseEntity.ok(healthInfoGetElementList)
     }
 
+    //해당 건강정보를 상세하게 보는 메서드
     override fun get(id: Int, authentication: Authentication): ResponseEntity<HealthInfoGetRes> {
         return ResponseEntity.ok(
             HealthInfoGetRes(healthInfoRepository.findById(id).orElseThrow())
