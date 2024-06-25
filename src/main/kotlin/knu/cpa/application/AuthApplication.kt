@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.Authentication
 
+//ServiceImpl의 설명 참조
 interface AuthApplication {
     fun getLogin(code: String): ResponseEntity<AuthLoginRes>
     fun patchLogin(refreshToken: String): ResponseEntity<AuthLoginRes>

@@ -10,6 +10,7 @@ import java.util.*
 
 interface StrokeRepository: JpaRepository<Stroke, Int> {
 
+    //가장 최신의 Stroke 예측 데이터를 가져오는 메서드
     @Query(
         "SELECT s FROM Stroke s " +
                 "LEFT JOIN s.userHealth uH " +
@@ -18,6 +19,7 @@ interface StrokeRepository: JpaRepository<Stroke, Int> {
     )
     fun findTopByUserOrderByIdDesc(user: User, pageable: Pageable): List<Stroke>
 
+    //User에 따라 Stroke 예측 데이터들을 모두 가져오는 메서드
     @Query(
         "SELECT s FROM Stroke s " +
         "LEFT JOIN s.userHealth uH " +

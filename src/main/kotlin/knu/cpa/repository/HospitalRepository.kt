@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param
 
 interface HospitalRepository : JpaRepository<Hospital, Int> {
 
+    //가까운 병원을 조회해주는 메서드
     @Query(
         "SELECT h FROM Hospital h " +
                 "WHERE h.longitude IS NOT NULL AND h.latitude IS NOT NULL " +
